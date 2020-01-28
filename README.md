@@ -1,4 +1,4 @@
-# tmpl
+# tmpl - Template engine for CLI to format JSON data
 
 [![Go status](https://github.com/haya14busa/tmpl/workflows/Go/badge.svg)](https://github.com/haya14busa/tmpl/actions)
 [![releases](https://img.shields.io/github/release/haya14busa/tmpl.svg)](https://github.com/haya14busa/tmpl/releases)
