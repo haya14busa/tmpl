@@ -73,6 +73,7 @@ func usage() {
   - 1: element=2
   - 2: element=3
   Nest: ok`)
+	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "GitHub: https://github.com/haya14busa/tmpl")
 	os.Exit(2)
 }

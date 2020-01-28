@@ -28,7 +28,6 @@ $ go get github.com/haya14busa/tmpl
 ## tmpl -h
 
 ```
-$ tmpl -h
 Usage: tmpl [FLAGS] [Template Files]
         Generate textual output using Go text/template from given data in STDIN
 Flags:
@@ -48,6 +47,33 @@ Functions:
    strings:
         Go "strings" package functions. https://golang.org/pkg/strings/
         e.g. {{ strings.Title "test" }}
+Examples:
+  $ echo '{"data": 14}' | tmpl -t 'data={{.data}},user={{ strings.ToUpper (env "USER") }}'
+  data=14,user=HAYA14BUSA
+  $ cat _testdata/base.json
+  {
+    "str": "string test",
+    "num": 14,
+    "array": [1,2,3],
+    "nested": { "value": "ok"}
+  }
+  $ cat _testdata/base.tmpl
+  str: {{ .str }}
+  num: {{ .num }}
+  Loop array
+  {{ range $idx,$ele := .array -}}
+  - {{ $idx }}: element={{ $ele }}
+  {{ end -}}
+
+  Nest: {{ .nested.value }}
+  $ tmpl _testdata/base.tmpl < _testdata/base.json
+  str: string test
+  num: 14
+  Loop array
+  - 0: element=1
+  - 1: element=2
+  - 2: element=3
+  Nest: ok
 
 GitHub: https://github.com/haya14busa/tmpl
 ```
