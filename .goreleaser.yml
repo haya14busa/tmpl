@@ -1,0 +1,39 @@
+# Document: http://goreleaser.com
+builds:
+  - env:
+    - CGO_ENABLED=0
+    main: .
+    ldflags: -s -w -X main.version={{.Version}}
+
+archives:
+  - id: main
+    goos:
+      - linux
+      - darwin
+      - windows
+    files:
+      - LICENSE
+      - README.md
+
+brews:
+  - github:
+      owner: haya14busa
+      name: homebrew-tap
+    folder: Formula
+    homepage:  https://github.com/haya14busa/tmpl
+    description: Generate textual output using Go text/template from given data in STDIN
+    test: |
+      system "#{bin}/tmpl -version"
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
