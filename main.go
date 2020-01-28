@@ -35,8 +35,47 @@ func usage() {
 	fmt.Fprintln(os.Stderr, "Flags:")
 	flag.PrintDefaults()
 	fmt.Fprintln(os.Stderr, "")
-	fmt.Fprintln(os.Stderr, "GitHub: https://github.com/haya14busa/tmpl")
 	fmt.Fprintln(os.Stderr, "Syntax: https://golang.org/pkg/text/template")
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, `Functions:
+   text/template builtin:
+   	See https://golang.org/pkg/text/template/#hdr-Functions
+   env:
+   	Return environment value of its argument.
+   	e.g. {{ env "HOME" }}
+   strings:
+   	Go "strings" package functions. https://golang.org/pkg/strings/
+   	e.g. {{ strings.Title "test" }}
+`)
+	fmt.Fprintln(os.Stderr, `Examples:
+  $ echo '{"data": 14}' | tmpl -t 'data={{.data}},user={{ strings.ToUpper (env "USER") }}'
+  data=14,user=HAYA14BUSA
+  $ cat _testdata/base.json
+  {
+    "str": "string test",
+    "num": 14,
+    "array": [1,2,3],
+    "nested": { "value": "ok"}
+  }
+  $ cat _testdata/base.tmpl
+  str: {{ .str }}
+  num: {{ .num }}
+  Loop array
+  {{ range $idx,$ele := .array -}}
+  - {{ $idx }}: element={{ $ele }}
+  {{ end -}}
+
+  Nest: {{ .nested.value }}
+  $ tmpl _testdata/base.tmpl < _testdata/base.json
+  str: string test
+  num: 14
+  Loop array
+  - 0: element=1
+  - 1: element=2
+  - 2: element=3
+  Nest: ok
+`)
+	fmt.Fprintln(os.Stderr, "GitHub: https://github.com/haya14busa/tmpl")
 	os.Exit(2)
 }
 
