@@ -45,8 +45,7 @@ func usage() {
    	e.g. {{ env "HOME" }}
    strings:
    	Go "strings" package functions. https://golang.org/pkg/strings/
-   	e.g. {{ strings.Title "test" }}
-`)
+   	e.g. {{ strings.Title "test" }}`)
 	fmt.Fprintln(os.Stderr, `Examples:
   $ echo '{"data": 14}' | tmpl -t 'data={{.data}},user={{ strings.ToUpper (env "USER") }}'
   data=14,user=HAYA14BUSA
@@ -73,8 +72,7 @@ func usage() {
   - 0: element=1
   - 1: element=2
   - 2: element=3
-  Nest: ok
-`)
+  Nest: ok`)
 	fmt.Fprintln(os.Stderr, "GitHub: https://github.com/haya14busa/tmpl")
 	os.Exit(2)
 }
