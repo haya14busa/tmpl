@@ -1,0 +1,8 @@
+str: {{ .str }}
+num: {{ .num }}
+Loop array
+{{ range $idx,$ele := .array -}}
+- {{ $idx }}: element={{ $ele }}
+{{ end -}}
+
+Nest: {{ .nested.value }}

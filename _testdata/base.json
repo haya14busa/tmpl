@@ -1,0 +1,6 @@
+{
+  "str": "string test",
+  "num": 14,
+  "array": [1,2,3],
+  "nested": { "value": "ok"}
+}
