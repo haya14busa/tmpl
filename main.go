@@ -107,6 +107,7 @@ func buildTemplate(files []string, opt option) (*template.Template, error) {
 	funcMap := template.FuncMap{
 		"env":     os.Getenv,
 		"strings": funcs.Strings,
+		"pos":     funcs.Pos,
 	}
 	name := "tmpl"
 	if len(files) > 0 {
