@@ -92,7 +92,7 @@ func main() {
 }
 
 func run(r io.Reader, w io.Writer, args []string, opt option) error {
-	var d map[string]interface{}
+	var d interface{}
 	if err := json.NewDecoder(r).Decode(&d); err != nil {
 		return err
 	}
