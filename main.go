@@ -108,6 +108,9 @@ func buildTemplate(files []string, opt option) (*template.Template, error) {
 		"env":     os.Getenv,
 		"strings": funcs.Strings,
 		"pos":     funcs.Pos,
+		"sp":      func() string { return " " },
+		"tab":     func() string { return "\t" },
+		"nl":      func() string { return "\n" },
 	}
 	name := "tmpl"
 	if len(files) > 0 {
