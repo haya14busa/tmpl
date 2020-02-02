@@ -37,7 +37,7 @@ func usage() {
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Syntax: https://golang.org/pkg/text/template")
 	fmt.Fprintln(os.Stderr, "")
-	fmt.Fprintln(os.Stderr, `Functions:
+	fmt.Fprintf(os.Stderr, `Functions:
    text/template builtin:
    	See https://golang.org/pkg/text/template/#hdr-Functions
    env:
@@ -45,7 +45,18 @@ func usage() {
    	e.g. {{ env "HOME" }}
    strings:
    	Go "strings" package functions. https://golang.org/pkg/strings/
-   	e.g. {{ strings.Title "test" }}`)
+   	e.g. {{ strings.Title "test" }}
+   sp:
+   	Space
+   nl:
+   	New line
+   tab:
+   	Tab character
+   pos.Offset:
+   	Return position[1] of file from a given offset.
+   	e.g. {{ pos.Offset "file.txt" 14 }}
+   	[1]: https://godoc.org/github.com/haya14busa/offset#Position
+`)
 	fmt.Fprintln(os.Stderr, `Examples:
   $ echo '{"data": 14}' | tmpl -t 'data={{.data}},user={{ strings.ToUpper (env "USER") }}'
   data=14,user=HAYA14BUSA
@@ -107,6 +118,10 @@ func buildTemplate(files []string, opt option) (*template.Template, error) {
 	funcMap := template.FuncMap{
 		"env":     os.Getenv,
 		"strings": funcs.Strings,
+		"pos":     funcs.Pos,
+		"sp":      func() string { return " " },
+		"tab":     func() string { return "\t" },
+		"nl":      func() string { return "\n" },
 	}
 	name := "tmpl"
 	if len(files) > 0 {

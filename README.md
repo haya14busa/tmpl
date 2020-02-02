@@ -47,6 +47,17 @@ Functions:
    strings:
         Go "strings" package functions. https://golang.org/pkg/strings/
         e.g. {{ strings.Title "test" }}
+   sp:
+        Space
+   nl:
+        New line
+   tab:
+        Tab character
+   pos.Offset:
+        Return position[1] of file from a given offset.
+        e.g. {{ pos.Offset "file.txt" 14 }}
+        [1]: https://godoc.org/github.com/haya14busa/offset#Position
+
 Examples:
   $ echo '{"data": 14}' | tmpl -t 'data={{.data}},user={{ strings.ToUpper (env "USER") }}'
   data=14,user=HAYA14BUSA

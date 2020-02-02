@@ -1,0 +1,9 @@
+space?:ng:end
+space?: ok:end
+tab?:ng:end
+tab?:	ok:end
+
+---newline?:ng:end
+
+---newline?:
+ok:end

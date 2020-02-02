@@ -1,4 +1,8 @@
 github.com/google/go-cmp v0.4.0 h1:xsAVV57WRhGj6kEIi8ReJzQlHHqcBYCElAvkovg3B/4=
 github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/haya14busa/offset v0.0.0-20200202111834-34c588f9efd0 h1:E2LrRzyXUVF/BRe90J0gp4EvAtWSZUCeAyb91G6ceTE=
+github.com/haya14busa/offset v0.0.0-20200202111834-34c588f9efd0/go.mod h1:1weLMDcpdvi04nIdsMqr/dWp7wTP3HqcrvsYuw6RMzE=
+github.com/haya14busa/offset v0.0.0-20200202114535-db93fe1110ca h1:EBpcvX16K/7pAYDrBOCqY0Azv+OxlEPEbdAllggJ3D8=
+github.com/haya14busa/offset v0.0.0-20200202114535-db93fe1110ca/go.mod h1:1weLMDcpdvi04nIdsMqr/dWp7wTP3HqcrvsYuw6RMzE=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
