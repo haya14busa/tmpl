@@ -1,6 +1,9 @@
 package funcs
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 func Strings() StringsFuncs {
 	return StringsFuncs{}
@@ -9,20 +12,26 @@ func Strings() StringsFuncs {
 type StringsFuncs struct{}
 
 // From https://golang.org/pkg/strings/
-func (StringsFuncs) Compare(a, b string) int                   { return strings.Compare(a, b) }
-func (StringsFuncs) Contains(s, substr string) bool            { return strings.Contains(s, substr) }
-func (StringsFuncs) ContainsAny(s, chars string) bool          { return strings.ContainsAny(s, chars) }
-func (StringsFuncs) ContainsRune(s string, r rune) bool        { return strings.ContainsRune(s, r) }
-func (StringsFuncs) Count(s, substr string) int                { return strings.Count(s, substr) }
-func (StringsFuncs) EqualFold(s, t string) bool                { return strings.EqualFold(s, t) }
-func (StringsFuncs) Fields(s string) []string                  { return strings.Fields(s) }
-func (StringsFuncs) HasPrefix(s, prefix string) bool           { return strings.HasPrefix(s, prefix) }
-func (StringsFuncs) HasSuffix(s, suffix string) bool           { return strings.HasSuffix(s, suffix) }
-func (StringsFuncs) Index(s, substr string) int                { return strings.Index(s, substr) }
-func (StringsFuncs) IndexAny(s, chars string) int              { return strings.IndexAny(s, chars) }
-func (StringsFuncs) IndexByte(s string, c byte) int            { return strings.IndexByte(s, c) }
-func (StringsFuncs) IndexRune(s string, r rune) int            { return strings.IndexRune(s, r) }
-func (StringsFuncs) Join(a []string, sep string) string        { return strings.Join(a, sep) }
+func (StringsFuncs) Compare(a, b string) int            { return strings.Compare(a, b) }
+func (StringsFuncs) Contains(s, substr string) bool     { return strings.Contains(s, substr) }
+func (StringsFuncs) ContainsAny(s, chars string) bool   { return strings.ContainsAny(s, chars) }
+func (StringsFuncs) ContainsRune(s string, r rune) bool { return strings.ContainsRune(s, r) }
+func (StringsFuncs) Count(s, substr string) int         { return strings.Count(s, substr) }
+func (StringsFuncs) EqualFold(s, t string) bool         { return strings.EqualFold(s, t) }
+func (StringsFuncs) Fields(s string) []string           { return strings.Fields(s) }
+func (StringsFuncs) HasPrefix(s, prefix string) bool    { return strings.HasPrefix(s, prefix) }
+func (StringsFuncs) HasSuffix(s, suffix string) bool    { return strings.HasSuffix(s, suffix) }
+func (StringsFuncs) Index(s, substr string) int         { return strings.Index(s, substr) }
+func (StringsFuncs) IndexAny(s, chars string) int       { return strings.IndexAny(s, chars) }
+func (StringsFuncs) IndexByte(s string, c byte) int     { return strings.IndexByte(s, c) }
+func (StringsFuncs) IndexRune(s string, r rune) int     { return strings.IndexRune(s, r) }
+func (StringsFuncs) Join(as []interface{}, sep string) string {
+	ss := []string{}
+	for _, a := range as {
+		ss = append(ss, fmt.Sprintf("%s", a))
+	}
+	return strings.Join(ss, sep)
+}
 func (StringsFuncs) LastIndex(s, substr string) int            { return strings.LastIndex(s, substr) }
 func (StringsFuncs) LastIndexAny(s, chars string) int          { return strings.LastIndexAny(s, chars) }
 func (StringsFuncs) LastIndexByte(s string, c byte) int        { return strings.LastIndexByte(s, c) }
