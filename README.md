@@ -90,3 +90,6 @@ Examples:
 
 GitHub: https://github.com/haya14busa/tmpl
 ```
+
+### tmpl -f=jsonl demo
+![tmpl jsonl demo](https://user-images.githubusercontent.com/3797062/81494706-e2e44c00-92e5-11ea-9f91-6a9d341c1638.gif)
