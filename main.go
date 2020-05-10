@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -16,15 +17,50 @@ import (
 // Populated during build.
 var version = "master"
 
+// Format represents input format.
+type Format int
+
+const (
+	FormatJSON Format = iota
+	FormatJSONL
+)
+
+// String implements the flag.Value interface
+func (f *Format) String() string {
+	names := [...]string{
+		"json",
+		"jsonl",
+	}
+	if *f < FormatJSON || *f > FormatJSONL {
+		return "Unknown mode"
+	}
+
+	return names[*f]
+}
+
+// Set implements the flag.Value interface
+func (f *Format) Set(value string) error {
+	switch value {
+	case "", "json":
+		*f = FormatJSON
+	case "jsonl":
+		*f = FormatJSONL
+	default:
+		return fmt.Errorf("invalid format name: %s", value)
+	}
+	return nil
+}
+
 type option struct {
 	version bool
 	tmpl    string
+	format  Format
 }
 
 func setupFlags(opt *option) {
 	flag.BoolVar(&opt.version, "version", false, "print version")
 	flag.StringVar(&opt.tmpl, "t", "", "Go text/template text template")
-
+	flag.Var(&opt.format, "f", "input format. Available format: [json (default), jsonl (http://jsonlines.org/)]")
 	flag.Usage = usage
 	flag.Parse()
 }
@@ -104,14 +140,31 @@ func main() {
 
 func run(r io.Reader, w io.Writer, args []string, opt option) error {
 	var d interface{}
-	if err := json.NewDecoder(r).Decode(&d); err != nil {
-		return err
+	var errCh chan (error)
+	switch opt.format {
+	case FormatJSON:
+		if err := json.NewDecoder(r).Decode(&d); err != nil {
+			return err
+		}
+	case FormatJSONL:
+		errCh = make(chan error, 1)
+		jsonlinesCh := make(chan interface{})
+		go jsonl(r, jsonlinesCh, errCh)
+		d = jsonlinesCh
 	}
 	t, err := buildTemplate(args, opt)
 	if err != nil {
 		return fmt.Errorf("failed to build template: %v", err)
 	}
-	return t.Execute(w, d)
+	if err := t.Execute(w, d); err != nil {
+		return err
+	}
+	select {
+	case err := <-errCh:
+		return err
+	default:
+	}
+	return nil
 }
 
 func buildTemplate(files []string, opt option) (*template.Template, error) {
@@ -140,4 +193,20 @@ func buildTemplate(files []string, opt option) (*template.Template, error) {
 		return t, nil
 	}
 	return nil, errors.New("No templates specified. Use -t or pass template files as arguments.")
+}
+
+func jsonl(r io.Reader, jsonlines chan<- interface{}, errCh chan<- error) {
+	s := bufio.NewScanner(r)
+	for s.Scan() {
+		var l interface{}
+		if err := json.Unmarshal(s.Bytes(), &l); err != nil {
+			errCh <- err
+			break
+		}
+		jsonlines <- l
+	}
+	close(jsonlines)
+	if err := s.Err(); err != nil {
+		errCh <- err
+	}
 }

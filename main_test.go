@@ -26,12 +26,7 @@ func TestRun(t *testing.T) {
 }
 
 func goldenTest(t *testing.T, name string) {
-	data, err := os.Open(fmt.Sprintf("%s.json", name))
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	defer data.Close()
+	data, format, err := getInput(t, name)
 	outFname := fmt.Sprintf("%s.out", name)
 	out, err := os.Create(outFname)
 	if err != nil {
@@ -44,9 +39,13 @@ func goldenTest(t *testing.T, name string) {
 		t.Error(err)
 		return
 	}
+	wantErr := strings.Contains(name, "error")
 	files = append(files, helpers...)
-	if err := run(data, out, files, option{}); err != nil {
+	err = run(data, out, files, option{format: format})
+	if err != nil && !wantErr {
 		t.Error(err)
+	} else if err == nil && wantErr {
+		t.Error("got nil, but want error")
 	}
 	out.Close()
 	d, err := diff(outFname, fmt.Sprintf("%s.ok", name))
@@ -56,6 +55,20 @@ func goldenTest(t *testing.T, name string) {
 	if d != "" {
 		t.Errorf("Diff Found:\n%s", d)
 	}
+}
+
+func getInput(t *testing.T, name string) (file *os.File, format Format, err error) {
+	jsonlFile, err := os.Open(fmt.Sprintf("%s.jsonl", name))
+	if err == nil {
+		t.Cleanup(func() { jsonlFile.Close() })
+		return jsonlFile, FormatJSONL, nil
+	}
+	data, err := os.Open(fmt.Sprintf("%s.json", name))
+	if err != nil {
+		return nil, FormatJSON, err
+	}
+	t.Cleanup(func() { data.Close() })
+	return data, FormatJSON, nil
 }
 
 func diff(f1, f2 string) (string, error) {
