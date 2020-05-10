@@ -17,17 +17,50 @@ import (
 // Populated during build.
 var version = "master"
 
+// Format represents input format.
+type Format int
+
+const (
+	FormatJSON Format = iota
+	FormatJSONL
+)
+
+// String implements the flag.Value interface
+func (f *Format) String() string {
+	names := [...]string{
+		"json",
+		"jsonl",
+	}
+	if *f < FormatJSON || *f > FormatJSONL {
+		return "Unknown mode"
+	}
+
+	return names[*f]
+}
+
+// Set implements the flag.Value interface
+func (f *Format) Set(value string) error {
+	switch value {
+	case "", "json":
+		*f = FormatJSON
+	case "jsonl":
+		*f = FormatJSONL
+	default:
+		return fmt.Errorf("invalid format name: %s", value)
+	}
+	return nil
+}
+
 type option struct {
 	version bool
 	tmpl    string
-	jsonl   bool
+	format  Format
 }
 
 func setupFlags(opt *option) {
 	flag.BoolVar(&opt.version, "version", false, "print version")
 	flag.StringVar(&opt.tmpl, "t", "", "Go text/template text template")
-	flag.BoolVar(&opt.jsonl, "jsonl", false, "Accept input as jsonl")
-
+	flag.Var(&opt.format, "f", "input format. Available format: [json (default), jsonl (http://jsonlines.org/)]")
 	flag.Usage = usage
 	flag.Parse()
 }
@@ -108,15 +141,16 @@ func main() {
 func run(r io.Reader, w io.Writer, args []string, opt option) error {
 	var d interface{}
 	var errCh chan (error)
-	if opt.jsonl {
+	switch opt.format {
+	case FormatJSON:
+		if err := json.NewDecoder(r).Decode(&d); err != nil {
+			return err
+		}
+	case FormatJSONL:
 		errCh = make(chan error, 1)
 		jsonlinesCh := make(chan interface{})
 		go jsonl(r, jsonlinesCh, errCh)
 		d = jsonlinesCh
-	} else {
-		if err := json.NewDecoder(r).Decode(&d); err != nil {
-			return err
-		}
 	}
 	t, err := buildTemplate(args, opt)
 	if err != nil {
