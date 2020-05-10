@@ -107,12 +107,9 @@ func main() {
 
 func run(r io.Reader, w io.Writer, args []string, opt option) error {
 	var d interface{}
+	var errCh chan (error)
 	if opt.jsonl {
-		jsonlines, err := jsonl(r)
-		if err != nil {
-			return err
-		}
-		d = jsonlines
+		d, errCh = jsonl(r)
 	} else {
 		if err := json.NewDecoder(r).Decode(&d); err != nil {
 			return err
@@ -122,7 +119,15 @@ func run(r io.Reader, w io.Writer, args []string, opt option) error {
 	if err != nil {
 		return fmt.Errorf("failed to build template: %v", err)
 	}
-	return t.Execute(w, d)
+	if err := t.Execute(w, d); err != nil {
+		return err
+	}
+	select {
+	case err := <-errCh:
+		return err
+	default:
+	}
+	return nil
 }
 
 func buildTemplate(files []string, opt option) (*template.Template, error) {
@@ -153,18 +158,23 @@ func buildTemplate(files []string, opt option) (*template.Template, error) {
 	return nil, errors.New("No templates specified. Use -t or pass template files as arguments.")
 }
 
-func jsonl(r io.Reader) ([]interface{}, error) {
-	var jsonlines []interface{}
-	s := bufio.NewScanner(r)
-	for s.Scan() {
-		var l interface{}
-		if err := json.Unmarshal(s.Bytes(), &l); err != nil {
-			return nil, err
+func jsonl(r io.Reader) (chan (interface{}), chan (error)) {
+	jsonlines := make(chan interface{})
+	errCh := make(chan error, 1)
+	go func() {
+		s := bufio.NewScanner(r)
+		for s.Scan() {
+			var l interface{}
+			if err := json.Unmarshal(s.Bytes(), &l); err != nil {
+				errCh <- err
+				break
+			}
+			jsonlines <- l
 		}
-		jsonlines = append(jsonlines, l)
-	}
-	if err := s.Err(); err != nil {
-		return nil, err
-	}
-	return jsonlines, nil
+		close(jsonlines)
+		if err := s.Err(); err != nil {
+			errCh <- err
+		}
+	}()
+	return jsonlines, errCh
 }

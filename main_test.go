@@ -39,9 +39,13 @@ func goldenTest(t *testing.T, name string) {
 		t.Error(err)
 		return
 	}
+	wantErr := strings.Contains(name, "error")
 	files = append(files, helpers...)
-	if err := run(data, out, files, option{jsonl: jsonl}); err != nil {
+	err = run(data, out, files, option{jsonl: jsonl})
+	if err != nil && !wantErr {
 		t.Error(err)
+	} else if err == nil && wantErr {
+		t.Error("got nil, but want error")
 	}
 	out.Close()
 	d, err := diff(outFname, fmt.Sprintf("%s.ok", name))
