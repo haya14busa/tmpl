@@ -31,6 +31,8 @@ $ go get github.com/haya14busa/tmpl
 Usage: tmpl [FLAGS] [Template Files]
         Generate textual output using Go text/template from given data in STDIN
 Flags:
+  -f value
+        input format. Available format: [json (default), jsonl (http://jsonlines.org/)]
   -t string
         Go text/template text template
   -version
