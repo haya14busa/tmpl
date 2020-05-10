@@ -2,6 +2,8 @@
 
 [![Go status](https://github.com/haya14busa/tmpl/workflows/Go/badge.svg)](https://github.com/haya14busa/tmpl/actions)
 [![releases](https://img.shields.io/github/release/haya14busa/tmpl.svg)](https://github.com/haya14busa/tmpl/releases)
+[![release](https://github.com/haya14busa/tmpl/workflows/release/badge.svg)](https://github.com/haya14busa/tmpl/actions?query=workflow%3Arelease)
+[![action-bumpr supported](https://img.shields.io/badge/bumpr-supported-ff69b4?logo=github&link=https://github.com/haya14busa/action-bumpr)](https://github.com/haya14busa/action-bumpr)
 
 ## Installation
 
