@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -19,11 +20,13 @@ var version = "master"
 type option struct {
 	version bool
 	tmpl    string
+	jsonl   bool
 }
 
 func setupFlags(opt *option) {
 	flag.BoolVar(&opt.version, "version", false, "print version")
 	flag.StringVar(&opt.tmpl, "t", "", "Go text/template text template")
+	flag.BoolVar(&opt.jsonl, "jsonl", false, "Accept input as jsonl")
 
 	flag.Usage = usage
 	flag.Parse()
@@ -104,8 +107,16 @@ func main() {
 
 func run(r io.Reader, w io.Writer, args []string, opt option) error {
 	var d interface{}
-	if err := json.NewDecoder(r).Decode(&d); err != nil {
-		return err
+	if opt.jsonl {
+		jsonlines, err := jsonl(r)
+		if err != nil {
+			return err
+		}
+		d = jsonlines
+	} else {
+		if err := json.NewDecoder(r).Decode(&d); err != nil {
+			return err
+		}
 	}
 	t, err := buildTemplate(args, opt)
 	if err != nil {
@@ -140,4 +151,20 @@ func buildTemplate(files []string, opt option) (*template.Template, error) {
 		return t, nil
 	}
 	return nil, errors.New("No templates specified. Use -t or pass template files as arguments.")
+}
+
+func jsonl(r io.Reader) ([]interface{}, error) {
+	var jsonlines []interface{}
+	s := bufio.NewScanner(r)
+	for s.Scan() {
+		var l interface{}
+		if err := json.Unmarshal(s.Bytes(), &l); err != nil {
+			return nil, err
+		}
+		jsonlines = append(jsonlines, l)
+	}
+	if err := s.Err(); err != nil {
+		return nil, err
+	}
+	return jsonlines, nil
 }
