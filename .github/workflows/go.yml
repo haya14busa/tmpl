@@ -20,4 +20,4 @@ jobs:
       run: go install .
 
     - name: Demo
-      run: ./_testdata/demo/demo-test.sh
+      run: ./_testdata/demo/demo-jsonl-test.sh
